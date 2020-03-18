@@ -1,5 +1,4 @@
 import docx2txt
-import extract_email as em
 
 def extract_text_from_doc(path):
     temp = docx2txt.process(path)

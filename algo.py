@@ -89,7 +89,21 @@ class Parse():
 
 
             # experience = self.extract_experience(inputString)
-            info = {'Name': name, 'Number':str(phonenumber), 'Mail':str(emails), 'Skills': skill_set}
+            info['Name'] = name
+
+            info['Phone Number'] = phonenumber
+
+            if len(mail) > 0:
+                info['mail id'] = emails
+            else:
+                info['mail id'] = 'NA'
+
+            info['Experience']= experience
+
+            info['Skill Count'] = skillcount            
+
+            info['Skills']= skill_set
+
             self.information.append(info)
 
 

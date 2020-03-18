@@ -1,0 +1,24 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/mycss.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <title>Resume Data</title>
+</head>
+
+<body>
+  <ul>
+    <li><a href="/logout">LogOut</a></li>
+    <li><img src="{{ url_for('static', filename='logo.png') }}"></li>
+  </ul>
+  <a style="margin:70px 0 310px 0;" href="{{ url_for('hello') }}" class="btn btn-lg btn-success">All Data <span class="glyphicon glyphicon-log-in"></span></a>
+  <a style="margin:70px 0 310px 0;" href="{{ url_for('allmail') }}" class="btn btn-lg btn-success">E-mails <span class="glyphicon glyphicon-log-in"></span></a>
+  <a style="margin:70px 0 310px 0;" href="{{ url_for('allcontact') }}" class="btn btn-lg btn-success">Contacts <span class="glyphicon glyphicon-log-in"></span></a>
+  <a style="margin:70px 0 310px 0;" href="#" class="btn btn-lg btn-success">Sort by Experience <span class="glyphicon glyphicon-log-in"></span></a>
+  <a style="margin:70px 0 310px 0;" href="#" class="btn btn-lg btn-success">Filter data <span class="glyphicon glyphicon-log-in"></span></a>
+
+  </body>
+  </html>

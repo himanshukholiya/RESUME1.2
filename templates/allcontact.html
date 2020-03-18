@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/mycss.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Data</title>
+</head>
+
+<body>
+  <ul>
+    <li><a class="active" href="{{ url_for('hello') }}">All Data</a></li>
+    <li><a href="{{ url_for('allmail') }}">E-mails</a></li>
+    <li><a href="{{ url_for('allcontact') }}">Contacts</a></li>
+    <li><img src="{{ url_for('static', filename='logo.png') }}"></li>
+  </ul>
+    
+  <table id="tab">
+    <tr>
+      <th>Name</th>
+      <th>Number</th>
+    </tr>
+          {% for d in data %}
+          <tr>
+            {% if d.Name %}   
+            <td>{{d.Name}}</td>
+            {% else %}
+            <td> NA </td>
+            {% endif %}
+
+          {% if d.Number %}
+                <td>{{ d.Number }}</td>
+            {% else %}
+                <td> NA </td>
+          {% endif %}
+
+        </tr>
+        {% endfor %}
+    
+  </table>
+</body>
+</html>

@@ -20,7 +20,6 @@ import skills
 
 # load pre-trained model
 nlp = spacy.load('en_core_web_sm')
-
 # initialize matcher with a vocab
 matcher = Matcher(nlp.vocab)
 

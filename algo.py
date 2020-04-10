@@ -117,7 +117,7 @@ class Parse():
         if extension == "docx":
             try:
                 print(fileName)
-                filetext = ed.extract_text_from_doc(f)
+                filetext = ed.extract_text_from_doc(fileName)
                 filetext = filetext.replace('\t',' ')
                 filetext = filetext.replace('  ',' ').replace('      ',' ').replace('   ',' ').replace('   ',' ')
                 return filetext

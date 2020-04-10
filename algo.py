@@ -19,9 +19,9 @@ import nexp
 import skills as sk
 
 
-
 # load pre-trained model
 nlp = spacy.load('en_core_web_sm')
+
 
 # initialize matcher with a vocab
 matcher = Matcher(nlp.vocab)
@@ -30,32 +30,37 @@ class Parse():
 
     information=[]
     inputString = ''
-    tokens = []
-    lines = []
-    sentences = []
 
     def __init__(self, verose):
 
         #Glob module matches certain patterns
-        doc_files = glob.glob("Resume/*.doc")
         docx_files = glob.glob("Resume/*.docx")
         pdf_files = glob.glob("Resume/*.pdf")
 
 
-        files = set(doc_files + docx_files + pdf_files + rtf_files + text_files)
+        files = set(docx_files + pdf_files)
+        skillcount = 0;
 
         files = list(files)
+        i=1;
  
         for f in files:
+            print(i)
+            i+=1
             # info is a dictionary that stores all the data obtained from parsing
             info = {}
             extension = f.split(".")[-1]
 
-            info['extension'] = extension 
+            # info['extension'] = extension 
             inputString =  self.readFile(f, extension)
+            inputString = inputString.lower()
+            
+            __nlp = nlp(inputString)
+            __noun_chunks = list(__nlp.noun_chunks)
 
             # fetching person name
-            name = self.extract_name(inputString)
+            # name = self.extract_name(inputString)
+
 
             # fetching phone number
             phonenumbers = pn.extract_phone_numbers(inputString)
@@ -64,65 +69,65 @@ class Parse():
             else:
                 phonenumber = random.choice(phonenumbers)
             # print(phonenumber)
+            # info['Phone Number'] = phonenumber
+
 
             #fetching mail 
             mail = eemail.extract_email_addresses(inputString)
             # print(mail)
+            if mail is None or len(mail) < 0:
+                info['mail id'] = 'NA'
+            else:
+                info['mail id'] = mail
+
 
             #fetching skills of person
-            skillset = sk.extract_skills(inputString)
-            if skillset == []:
+            skillset = sk.extract_skills(__nlp,__noun_chunks)
+            # skillset = sk.extract_skills(inputString)
+            if skillset == [] or skillset ==0 or skillset is None:
                 skill_set = 'NA'
+                skillcount = 0
             else:
                 skill_set = skillset
-                skillcount = len(skill_set)
+                skillcount = len(skillset)
             # print(skill_set)
+            info['Skills']= skill_set
+            # info['Skill Count'] = skillcount 
+
 
             #fetching experience of person
-            experiences = nexp.extract_experience(filetext)
-            if experiences == []:
-                experience = 'NA'
+            experiences = nexp.extract_experience(inputString)
+            
+            if experiences == [] or experiences == 0:
+                experience = 'Fresher'
+                # print(experience)
             else:
-                experience = experiences
-                experience = experience.split(' ')
+                experience = experiences.split(' ')
                 experience = experience[0]
-
-
-            # experience = self.extract_experience(inputString)
-            info['Name'] = name
-
-            info['Phone Number'] = phonenumber
-
-            if len(mail) > 0:
-                info['mail id'] = emails
-            else:
-                info['mail id'] = 'NA'
-
+                # print(experience)
             info['Experience']= experience
+            
+            print('\n')
 
-            info['Skill Count'] = skillcount            
-
-            info['Skills']= skill_set
-
+            # info['Name'] = name
             self.information.append(info)
 
 
     def readFile(self, fileName, extension):
-
         if extension == "docx":
             try:
+                print(fileName)
                 filetext = ed.extract_text_from_doc(f)
                 filetext = filetext.replace('\t',' ')
                 filetext = filetext.replace('  ',' ').replace('      ',' ').replace('   ',' ').replace('   ',' ')
                 return filetext
-
             except:
                 return ''
                 pass
 
         elif extension == "pdf":
-            print("read pdf")
             try:
+                print(fileName)
                 text = self.read_pdf(fileName)
                 return text
             except:
@@ -132,12 +137,11 @@ class Parse():
         else:
             print ('Unsupported format')
             return ''
-    
-    def read_pdf(self, path):
-       
+
+
+    def read_pdf(self, path):     
         rsrcmgr = PDFResourceManager()
         retstr = io.StringIO()
-
         device = TextConverter(rsrcmgr, retstr)
         fp = open(path, 'rb')
         interpreter = PDFPageInterpreter(rsrcmgr, device)
@@ -155,19 +159,39 @@ class Parse():
         retstr.close()
         return text
     
-    def extract_name(self, resume_text):
-        nlp_text = nlp(resume_text)
 
-        # First name and Last name are always Proper Nouns
-        pattern = [{'POS': 'PROPN'}, {'POS': 'PROPN'}]
-        matcher.add('NAME', [pattern])
+    # def extract_name(self, resume_text):
+    #     nlp_text = nlp(resume_text)
+
+    #     # First name and Last name are always Proper Nouns
+    #     pattern = [{'POS': 'PROPN'}, {'POS': 'PROPN'}]
+    #     matcher.add('NAME', [pattern])
         
-        matches = matcher(nlp_text)
-        for match_id, start, end in matches:
-            span = nlp_text[start:end]
-            return span.text
-
-    
+    #     matches = matcher(nlp_text)
+    #     for match_id, start, end in matches:
+    #         span = nlp_text[start:end]
+    #         return span.text
 
 
 
+verose = False
+if "-v" in str(sys.argv):
+    verose = True
+p = Parse(verose)
+print(p.information)
+
+key = input('Enter your required Skills')
+index_of_dict_in_list= []
+data = p.information
+for dict in data:
+    skill_list = dict.get('Skills')
+    if key in skill_list:
+        index_of_dict_in_list.append(data.index(dict))
+
+# print(index_of_dict_in_list)
+
+for index in index_of_dict_in_list:
+    print(data[index])
+df = pd.DataFrame(data)
+df.to_csv('data1.csv')
+#print('done')
